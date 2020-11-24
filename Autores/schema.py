@@ -3,31 +3,33 @@ from graphene import relay, ObjectType
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
-from Autor.models import Libros, Autores
+from Autores.models import Libros, Autores
+
+class AutorNode(DjangoObjectType):
+    class Meta:
+        model = Autores
+        filter_fields = {
+        'name': ['exact', 'icontains', 'istartswith'],
+            'Fecha_Nacimiento': ['exact'],
+            'category': ['exact'],
+            'category__name': ['exact'],
+            }
+        interfaces = (relay.Node, )
 
 class LibrosNode(DjangoObjectType):
     class Meta:
         model = Libros
-        filter_fields = ['name', 'Autores']
-        interfaces = (relay.Node, )
-
-# Se hace lo mismo con el modelo Ingredient
-class AutorNode(DjangoObjectType):
-    class Meta:
-        model = Autor
-        # Permite un filtrado mas avanzado
         filter_fields = {
             'name': ['exact', 'icontains', 'istartswith'],
-            'notes': ['exact', 'icontains'],
-            'Libros': ['exact'],
-            'Libros__name': ['exact'],
+            'Fecha_creacion': ['exact'],
+            'Descripcion':['exact'],
         }
         interfaces = (relay.Node, )
 
 
 class Query(graphene.ObjectType):
-    Libros = relay.Node.Field(CategoryNode)
-    all_libros = DjangoFilterConnectionField(CategoryNode)
+    Libros = relay.Node.Field(LibrosNode)
+    all_libros = DjangoFilterConnectionField(LibrosNode)
 
-    ingredient = relay.Node.Field(LibrosNode)
-    all_autores = DjangoFilterConnectionField(AutortNode)
+    Autores = relay.Node.Field(AutorNode)
+    all_autores = DjangoFilterConnectionField(AutorNode)

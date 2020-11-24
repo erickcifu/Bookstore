@@ -1,10 +1,7 @@
 import graphene
+import Autores.schema
 
-import Autor.schema
-
-
-class Query(Autor.schema.Query, graphene.ObjectType):
-    
+class Query(Autores.schema.Query, graphene.ObjectType):
     pass
 
 schema = graphene.Schema(query=Query)
